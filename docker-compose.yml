@@ -1,0 +1,12 @@
+version: '3'
+services:
+  flask_app:
+    user: $UID:$GID
+    build:
+      context: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    command: >
+      sh -c "python app.py"

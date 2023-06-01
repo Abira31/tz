@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="/">Главное меню</a>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('profil.profil')}}">Профиль</a>
+                </li>
+                {% if not user.is_admin %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('test.index')}}">Тест</a>
+                </li>
+                {% endif %}
+            </ul>
+
+        </div>
+    </nav>
+    <div class="container text-center">
+        <div class="row">
+
+            <div class="col-md-6 offset-md-3">
+                <input type="hidden" id="user_id" value={{user.id}}>
+            </div>
+            <div class="col-md-6 offset-md-3">
+                <div><label>Фамилия</label></div>
+                <input type="text" value={{ user.fam }} disabled="disabled">
+            </div>
+            <div class="col-md-6 offset-md-3">
+                <div> <label>Имя</label></div>
+                <input type="text"
+                       {% if user.im|length > 1 %}
+                       value={{ user.im }}
+
+                        {% else %}
+                        value=""
+                        {% endif %}
+                    id="im">
+            </div>
+            <div class="col-md-6 offset-md-3">
+                <div><label>Отчество</label></div>
+                <input type="text"
+                       {% if user.ot|length > 1 %}
+                       value={{ user.ot }}
+
+                        {% else %}
+                        value=""
+                        {% endif %}
+                               id="ot">
+            </div>
+
+            <div class="col-md-6 offset-md-6 pt-2">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-3 ">
+                            <button onclick="update_user()">Обновить профиль</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if result %}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Вопрос</th>
+                        <th scope="col">Правильный ответ</th>
+                        <th scope="col">Ваш ответ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for res in result %}
+                    <tr>
+
+                        <th scope="row">{{ loop.index }}</th>
+                        <td>{{ res.test_text }}</td>
+                        <td>{{ res.test_right }}</td>
+                        <td {% if res.is_right==True %} class="table-success" {% else %} class="table-danger" {% endif
+                            %}>{{ res.user_answer }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tr>
+                </tbody>
+            </table>
+            {% endif %}
+
+            {% if user.is_admin %}
+            <div>
+                <h3>Отчет</h3>
+                <a href="{{ url_for('profil.download_file') }}">Скачать файл</a>
+            </div>
+            {% endif %}
+        </div>
+
+
+
+    </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+
+<script>
+    function update_user() {
+        let = data = {}
+        data['user_id'] = document.getElementById("user_id").value
+        data['im'] = document.getElementById("im").value
+        data['ot'] = document.getElementById("ot").value
+        let url = "http://127.0.0.1:5000/api/v1/user"
+        fetch(url, {
+            method: 'put',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+            .then(function (response) {
+            })
+    }
+</script>
