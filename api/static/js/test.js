@@ -5,8 +5,9 @@ var app = new Vue({
   data: {
     data_test : {},
     result_test:[],
-
+    is_post:true
   },
+
   mounted:function (){
     this.get_tests()
   },
@@ -80,6 +81,7 @@ var app = new Vue({
                 })
     },
     end_test:function (){
+
         let inputs = document.querySelectorAll("input")
         for (inp of inputs){
             if (inp.checked){
@@ -93,11 +95,15 @@ var app = new Vue({
         for (result of this.result_test){
             if (result.answer.length == 0){
                 alert('Вы не ответили на все вопросы')
+                this.is_post = false
                 break
             }
+            else {
+                this.is_post = true
+            }
         }
-
-              let url = "http://127.0.0.1:5000/api/v1/test"
+        if (this.is_post == true){
+                     let url = "http://127.0.0.1:5000/api/v1/test"
       fetch(url, {
                 method: 'post',
                 headers: {
@@ -110,6 +116,8 @@ var app = new Vue({
                         window.location.href = 'http://127.0.0.1:5000/profil'
                     }
                 })
+        }
+
 
 
 
